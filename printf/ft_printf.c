@@ -1,5 +1,4 @@
 #include <stdarg.h>
-#include <unistd.h>
 #include "Libft/libft.h"
 
 int count_args(const char *s)
@@ -33,6 +32,19 @@ static int	putnbr_base10(long nb)
 	return (count + 1);
 }
 
+static int	putnbr_u_base10(unsigned long nb)
+{
+	int 	count;
+	char	digit;
+
+	count = 0;
+	if (nb >= 10)
+		count += putnbr_u_base10(nb / 10);
+	digit = '0' + (nb % 10);
+	write(1, &digit, 1);
+	return (count + 1);
+}
+
 static int put_hex(unsigned long n)
 {
 	char base[] = "0123456789abcdef";
@@ -53,6 +65,7 @@ static int put_hex(unsigned long n)
 		write(1, &buf[i], 1);
 	return (len);
 }
+
 int write_c(va_list *ap)
 {
 	char c;
@@ -73,6 +86,7 @@ int write_s(va_list *ap)
 	write(1, str, len);
 	return (len);
 }
+
 int write_p(va_list *ap)
 {
 	unsigned long ptr;
@@ -85,6 +99,7 @@ int write_p(va_list *ap)
 	len = put_hex(ptr);
 	return (len + 2);
 }
+
 int write_d(va_list *ap)
 {
 	long nb;
@@ -104,6 +119,24 @@ int write_d(va_list *ap)
 	return (len);
 }
 
+int	write_u(va_list *ap)
+{
+	unsigned int	n;
+	unsigned long	nb;
+	int				len;
+
+	n = va_arg(*ap, unsigned int);
+	nb = n;
+	len = 0;
+	len += putnbr_u_base10(nb);
+	return (len);
+}
+
+int write_x(va_list *ap)
+{
+
+}
+
 int type_args(char c, va_list *ap)
 {
 	if (c == 'c')
@@ -114,6 +147,12 @@ int type_args(char c, va_list *ap)
 		return (write_p(ap));
 	else if (c == 'd')
 		return (write_d(ap));
+	else if (c == 'i')
+		return (write_d(ap));
+	else if (c == 'u')
+		return (write_u(ap));
+	else if (c == 'x')
+		return (write_x(ap));
 	return (0);
 }
 
@@ -148,9 +187,11 @@ int main(void)
 	ft_printf("=======test 1=======\n");
 	char	test1 = 'a';
 	ft_printf("mon prenom commence par %c\n\n", test1);
+
 	ft_printf("=======test 2=======\n");
 	char	test2[] = "axel";
 	ft_printf("je m'appelle %s\n\n", test2);
+
 	ft_printf("=======test 3=======\n");
 	int		num = 42;
 	char	*text = "Hello";
@@ -161,11 +202,28 @@ int main(void)
 	printf("Avec printf : %p\n", text);
 	ft_printf("Pointeur NULL : %p\n", null_ptr);
 	printf("Avec printf : %p\n\n", null_ptr);
+
 	ft_printf("=======test 4=======\n");
 	ft_printf("Nombre positif : %d\n", 42);
 	ft_printf("Nombre negatif : %d\n", -42);
 	ft_printf("Nombre NULL : %d\n", 0);
 	ft_printf("INT_MIN : %d\n", INT_MIN);
 	ft_printf("INT_MAX : %d\n", INT_MAX);
-	ft_printf("INT_MIN + 1 : %d\n", INT_MIN + 1);
+	ft_printf("INT_MIN + 1 : %d\n\n", INT_MIN + 1);
+
+	ft_printf("=======meme chose avec i=======\n");
+	ft_printf("Nombre positif : %i\n", 42);
+	ft_printf("Nombre negatif : %i\n", -42);
+	ft_printf("Nombre NULL : %i\n", 0);
+	ft_printf("INT_MIN : %i\n", INT_MIN);
+	ft_printf("INT_MAX : %i\n", INT_MAX);
+	ft_printf("INT_MIN + 1 : %i\n\n", INT_MIN + 1);
+
+	ft_printf("=======test 5=======\n");
+	ft_printf("Nombre positif : %u\n", 42);
+	ft_printf("Nombre negatif : %u\n", -42);
+	ft_printf("Nombre NULL : %u\n", 0);
+	ft_printf("INT_MIN : %u\n", INT_MIN);
+	ft_printf("INT_MAX : %u\n", INT_MAX);
+	ft_printf("INT_MIN + 1 : %u\n\n", INT_MIN + 1);
 }
