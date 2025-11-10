@@ -1,25 +1,20 @@
-#include <stdarg.h>
-#include "Libft/libft.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: avauclai <avauclai@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/10 12:26:11 by avauclai          #+#    #+#             */
+/*   Updated: 2025/11/10 13:56:39 by avauclai         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int count_args(const char *s)
-{
-	int count;
+#include "ft_printf.h"
 
-	count = 0;
-	while (*s++)
-	{
-		if (*s == '%')
-		{
-			s++;
-			if (*s)
-				count++;
-		}
-	}
-	return (count);
-}
-static int	putnbr_base10(long nb)
+int	putnbr_base10(long nb)
 {
-	int 	count;
+	int		count;
 	char	digit;
 
 	count = 0;
@@ -32,9 +27,9 @@ static int	putnbr_base10(long nb)
 	return (count + 1);
 }
 
-static int	putnbr_u_base10(unsigned long nb)
+int	putnbr_u_base10(unsigned long nb)
 {
-	int 	count;
+	int		count;
 	char	digit;
 
 	count = 0;
@@ -45,141 +40,7 @@ static int	putnbr_u_base10(unsigned long nb)
 	return (count + 1);
 }
 
-static int put_hex(unsigned long n)
-{
-	char base[] = "0123456789abcdef";
-	char buf[16];
-	int i;
-	int len;
-
-	i = 0;
-	if (n == 0)
-		buf[i++] = '0';
-	while (n > 0)
-	{
-		buf[i++] = base[n % 16];
-		n /= 16;
-	}
-	len = i;
-	while (i--)
-		write(1, &buf[i], 1);
-	return (len);
-}
-
-static int put_hex_upper(unsigned long n)
-{
-	char base[] = "0123456789ABCDEF";
-	char buf[16];
-	int i;
-	int len;
-
-	i = 0;
-	if (n == 0)
-		buf[i++] = '0';
-	while (n > 0)
-	{
-		buf[i++] = base[n % 16];
-		n /= 16;
-	}
-	len = i;
-	while (i--)
-		write(1, &buf[i], 1);
-	return (len);
-}
-
-int write_c(va_list *ap)
-{
-	char c;
-
-	c = (char)va_arg(*ap, int);
-	return (write(1, &c, 1));
-}
-
-int write_s(va_list *ap)
-{
-	char *str;
-	int len;
-
-	str = va_arg(*ap, char *);
-	if (str == NULL)
-		str = "(null)";
-	len = ft_strlen(str);
-	write(1, str, len);
-	return (len);
-}
-
-int write_p(va_list *ap)
-{
-	unsigned long ptr;
-	int len;
-
-	ptr = (unsigned long)va_arg(*ap, void *);
-	if (!ptr)
-		return (write(1, "(nil)", 5));
-	write(1, "0x", 2);
-	len = put_hex(ptr);
-	return (len + 2);
-}
-
-int write_d(va_list *ap)
-{
-	long nb;
-	int n;
-	int len;
-
-	n = va_arg(*ap, int);
-	nb = n;
-	len = 0;
-	if (nb < 0)
-	{
-		write(1, "-", 1);
-		len++;
-		nb = -nb;
-	}
-	len += putnbr_base10(nb);
-	return (len);
-}
-
-int	write_u(va_list *ap)
-{
-	unsigned int	n;
-	unsigned long	nb;
-	int				len;
-
-	n = va_arg(*ap, unsigned int);
-	nb = n;
-	len = 0;
-	len += putnbr_u_base10(nb);
-	return (len);
-}
-
-int write_x(va_list *ap)
-{
-	unsigned int	n;
-	unsigned long	nb;
-
-	n = va_arg(*ap, unsigned int);
-	nb = n;
-	return (put_hex(nb));
-}
-
-int write_X(va_list *ap)
-{
-	unsigned int	n;
-	unsigned long	nb;
-
-	n = va_arg(*ap, unsigned int);
-	nb = n;
-	return (put_hex_upper(nb));
-}
-int write_percent(void)
-{
-	char c;
-
-	c = '%';
-	return (write(1, &c, 1));
-}
-int type_args(char c, va_list *ap)
+int	type_args(char c, va_list *ap)
 {
 	if (c == 'c')
 		return (write_c(ap));
@@ -196,20 +57,18 @@ int type_args(char c, va_list *ap)
 	else if (c == 'x')
 		return (write_x(ap));
 	else if (c == 'X')
-		return (write_X(ap));
+		return (write_upper_x(ap));
 	else if (c == '%')
 		return (write_percent());
 	return (0);
 }
 
-int ft_printf(const char *format, ...)
+int	ft_printf(const char *format, ...)
 {
-	va_list list;
-	int count;
-	int total;
+	va_list	list;
+	int		total;
 
 	total = 0;
-	count = count_args(format);
 	va_start(list, format);
 	while (*format)
 	{
@@ -225,7 +84,7 @@ int ft_printf(const char *format, ...)
 			format++;
 		}
 	}
-	return (0);
+	return (total);
 }
 
 // int main(void)
@@ -281,8 +140,4 @@ int ft_printf(const char *format, ...)
 
 // 	ft_printf("=======test 7=======\n");
 // 	ft_printf("j'affiche un %%\n");
-
-// 	ft_printf("=======ultimate test=======\n");
-// 	char	*test = "je ferais ce test first try";
-// 	ft_printf("%s, je passerais tout les tests a %d %%. Adresse memoire du test : %p", "je m'appelle axel", 100, text);
-// }
+//	}
