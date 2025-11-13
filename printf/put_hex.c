@@ -6,7 +6,7 @@
 /*   By: avauclai <avauclai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 12:50:53 by avauclai          #+#    #+#             */
-/*   Updated: 2025/11/10 12:51:11 by avauclai         ###   ########.fr       */
+/*   Updated: 2025/11/13 12:46:55 by avauclai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ int	put_hex(unsigned long n)
 	}
 	len = i;
 	while (i--)
-		write(1, &buf[i], 1);
+	{
+		if (write(1, &buf[i], 1) == -1)
+			return (-1);
+	}
 	return (len);
 }
