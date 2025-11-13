@@ -6,7 +6,7 @@
 /*   By: avauclai <avauclai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 12:26:11 by avauclai          #+#    #+#             */
-/*   Updated: 2025/11/10 13:56:39 by avauclai         ###   ########.fr       */
+/*   Updated: 2025/11/13 12:35:27 by avauclai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,42 @@ int	putnbr_base10(long nb)
 {
 	int		count;
 	char	digit;
+	int		tmp;
 
 	count = 0;
 	if (nb >= 10)
 	{
-		count += putnbr_base10(nb / 10);
+		tmp = putnbr_base10(nb / 10);
+		if (tmp == -1)
+			return (-1);
+		count += tmp;
 	}
 	digit = '0' + (nb % 10);
-	write(1, &digit, 1);
-	return (count + 1);
+	if (write(1, &digit, 1) == -1)
+		return (-1);
+	count++;
+	return (count);
 }
 
 int	putnbr_u_base10(unsigned long nb)
 {
 	int		count;
 	char	digit;
+	int		tmp;
 
 	count = 0;
 	if (nb >= 10)
-		count += putnbr_u_base10(nb / 10);
+	{
+		tmp = putnbr_u_base10(nb / 10);
+		if (tmp == -1)
+			return (-1);
+		count += tmp;
+	}
 	digit = '0' + (nb % 10);
-	write(1, &digit, 1);
-	return (count + 1);
+	if (write(1, &digit, 1) == -1)
+		return (-1);
+	count++;
+	return (count);
 }
 
 int	type_args(char c, va_list *ap)
@@ -67,23 +81,27 @@ int	ft_printf(const char *format, ...)
 {
 	va_list	list;
 	int		total;
+	int		ret;
 
 	total = 0;
+	ret = 0;
 	va_start(list, format);
 	while (*format)
 	{
 		if (*format == '%' && *(format + 1))
 		{
-			total += type_args(*(format + 1), &list);
+			ret = type_args(*(format + 1), &list);
 			format += 2;
 		}
 		else
-		{
-			write(1, format, 1);
-			total++;
-			format++;
-		}
+			ret = write(1, format++, 1);
+		if (ret == -1)
+			break ;
+		total += ret;
 	}
+	va_end(list);
+	if (ret == -1)
+		return (-1);
 	return (total);
 }
 

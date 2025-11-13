@@ -6,7 +6,7 @@
 /*   By: avauclai <avauclai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 12:49:03 by avauclai          #+#    #+#             */
-/*   Updated: 2025/11/10 12:49:19 by avauclai         ###   ########.fr       */
+/*   Updated: 2025/11/13 12:11:33 by avauclai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,12 @@ int	write_x(va_list *ap)
 {
 	unsigned int	n;
 	unsigned long	nb;
+	ssize_t			ret;
 
 	n = va_arg(*ap, unsigned int);
 	nb = n;
-	return (put_hex(nb));
+	ret = put_hex(nb);
+	if (ret == -1)
+		return (-1);
+	return (ret);
 }
