@@ -6,7 +6,7 @@
 /*   By: avauclai <avauclai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 12:26:11 by avauclai          #+#    #+#             */
-/*   Updated: 2025/11/13 12:35:27 by avauclai         ###   ########.fr       */
+/*   Updated: 2025/11/13 13:20:35 by avauclai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int	ft_printf(const char *format, ...)
 	total = 0;
 	ret = 0;
 	va_start(list, format);
-	while (*format)
+	while (format && *format)
 	{
 		if (*format == '%' && *(format + 1))
 		{
